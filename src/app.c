@@ -12,6 +12,7 @@ static int g_filtered_count;
 static int ContainsNoCase(const wchar_t *haystack, const wchar_t *needle);
 static int HasLnkExt(const wchar_t *name);
 static void ScanDir(const wchar_t *dir);
+static void ScanStartMenu(const wchar_t *env_var);
 static int JoinPath(wchar_t *dst, size_t cap, const wchar_t *a, const wchar_t *b);
 
 void AppsInit(void) {

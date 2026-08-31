@@ -3,3 +3,9 @@
 *.out
 *.o
 *.obj
+
+#vscode
+.vscode
+
+# wau it's claude! (for audit)
+CLAUDE.md

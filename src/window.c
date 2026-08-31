@@ -1,11 +1,14 @@
 #include "include/window.h"
 #include "include/input.h"
 #include "include/render.h"
+#include "include/app.h"
 #include "config.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
     switch (msg) {
         case WM_CREATE:
+            AppsInit();
+            AppsFilter(L"");
             CreateEditControl(hwnd);
             return 0;
 
@@ -15,6 +18,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 
         case WM_PAINT:
             PaintResults(hwnd);
+            return 0;
+        
+        case WM_COMMAND:
+            if (LOWORD(w_param) == 1 && HIWORD(w_param) == EN_CHANGE) {
+                wchar_t query[MAX_ITEMS_LENGTH];
+                GetWindowText((HWND) l_param, query, MAX_ITEMS_LENGTH);
+                AppsFilter(query);
+                InvalidateRect(hwnd, NULL, TRUE);
+            }
             return 0;
     }
     return DefWindowProc(hwnd, msg, w_param, l_param);

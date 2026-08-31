@@ -7,5 +7,8 @@
  
 #define ROW_HEIGHT    30
 #define RESULTS_START_Y 50
+
+#define MAX_ITEMS 512
+#define MAX_ITEMS_LENGTH 128
  
 #endif

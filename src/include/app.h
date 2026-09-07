@@ -16,4 +16,11 @@ void AppsFilter(const wchar_t *query);
 int AppsFilteredCount(void);
 const AppEntry *AppsFilteredAt(int i);
 
+//selection controller 
+void AppSelectMove(int delta);
+int AppSelectedIndex(void);
+int AppTopIndex(void);
+const AppEntry *AppSelectedEntry(void);
+BOOL AppLaunchSelected(void);
+
 #endif

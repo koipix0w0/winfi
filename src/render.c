@@ -33,8 +33,9 @@ void PaintResults(HWND hwnd) {
             SetTextColor(hdc, TEXT_FG);
         }
 
-        DeleteObject(sel_brush);
         DrawText(hdc, app -> name, -1, &row_rect , DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     }
+
+    DeleteObject(sel_brush);
     EndPaint(hwnd, &ps);
 }

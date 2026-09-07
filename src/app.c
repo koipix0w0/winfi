@@ -1,6 +1,7 @@
 #include "include/app.h"
 #include <wctype.h>
 #include <string.h>
+#include <shellapi.h>
 
 static const wchar_t MAIN_DIR[] = L"Microsoft\\Windows\\Start Menu\\Programs"; 
 
@@ -139,7 +140,7 @@ static int ContainsNoCase(const wchar_t *haystack, const wchar_t *needle) {
 }
 
 void AppSelectMove(int delta) {
-    if (g_filtered_count = 0) {
+    if (g_filtered_count == 0) {
         g_selected = 0; g_top = 0;
         return;
     }
@@ -151,4 +152,12 @@ void AppSelectMove(int delta) {
 
     if (g_selected < g_top) g_top = g_selected;
     if (g_selected >= g_top + MAX_RESULTS) g_top = g_selected - MAX_RESULTS + 1;
+}
+
+BOOL AppLaunchSelected(void) {
+    const AppEntry *e = AppSelectedEntry();
+    if (e == NULL) return FALSE;
+
+    HINSTANCE run = ShellExecute(NULL, L"open", e -> path, NULL, NULL, SW_SHOWNORMAL);
+    return (INT_PTR) run > 32;
 }

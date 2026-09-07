@@ -1,6 +1,7 @@
 #include "include/app.h"
 #include <wctype.h>
 #include <string.h>
+#include <shellapi.h>
 
 static const wchar_t MAIN_DIR[] = L"Microsoft\\Windows\\Start Menu\\Programs"; 
 
@@ -8,6 +9,8 @@ static AppEntry g_apps[MAX_ITEMS];
 static int g_app_count;
 static int g_filtered[MAX_ITEMS];
 static int g_filtered_count;
+static int g_selected;
+static int g_top;
 
 static int ContainsNoCase(const wchar_t *haystack, const wchar_t *needle);
 static int HasLnkExt(const wchar_t *name);
@@ -21,12 +24,28 @@ void AppsInit(void) {
     ScanStartMenu(L"APPDATA");
 }
 
+int AppSelectedIndex(void) {
+    return g_selected;
+}
+
+int AppTopIndex(void) {
+    return g_top;
+}
+
+const AppEntry *AppSelectedEntry(void) {
+    return AppsFilteredAt(g_selected);
+}
+
 void AppsFilter(const wchar_t *query) {
     g_filtered_count = 0;
     for (int i = 0; i < g_app_count; i++) {
         if (query == NULL || ContainsNoCase(g_apps[i].name, query))
             g_filtered[g_filtered_count++] = i;
     }
+
+    //resets pointer 
+    g_selected = 0;
+    g_top = 0;
 }
 
 int AppsFilteredCount(void) { return g_filtered_count; }
@@ -118,4 +137,27 @@ static int ContainsNoCase(const wchar_t *haystack, const wchar_t *needle) {
         if (!*b) return 1;
     }
     return 0;
+}
+
+void AppSelectMove(int delta) {
+    if (g_filtered_count == 0) {
+        g_selected = 0; g_top = 0;
+        return;
+    }
+
+    //clamp
+    g_selected += delta;
+    if (g_selected < 0) g_selected = 0;
+    if (g_selected >= g_filtered_count) g_selected = g_filtered_count - 1;
+
+    if (g_selected < g_top) g_top = g_selected;
+    if (g_selected >= g_top + MAX_RESULTS) g_top = g_selected - MAX_RESULTS + 1;
+}
+
+BOOL AppLaunchSelected(void) {
+    const AppEntry *e = AppSelectedEntry();
+    if (e == NULL) return FALSE;
+
+    HINSTANCE run = ShellExecute(NULL, L"open", e -> path, NULL, NULL, SW_SHOWNORMAL);
+    return (INT_PTR) run > 32;
 }

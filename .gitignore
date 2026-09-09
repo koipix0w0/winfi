@@ -4,6 +4,10 @@
 *.o
 *.obj
 
+#cmake
+build/
+CMakeUserPresets.json
+
 #vscode
 .vscode
 
